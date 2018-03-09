@@ -1,25 +1,35 @@
 import json
 # https://github.com/snipsco/snips-platform-documentation/tree/master/python
 import paho.mqtt.client as mqtt
+# Import sub-module 'pyparrot'
+import sys
+sys.path.insert(0, sys.path[0]+'/pyparrot')
+from Bebop import Bebop
+bebop = Bebop()
 
 # Boolean to debug things, set to True in production
 with_drone = False
 with_mqtt = True
 
 # MQTT client to connect to the bus
-if with_mqtt:_client = mqtt.Client()
+if with_mqtt: mqtt_client = mqtt.Client()
 
 
 
 # Subscribe to the important messages
 def on_connect(client, userdata, flags, rc):
-    mqtt_client.subscribe('hermes/intent/lightsTurnOnSet')
+   '''
+   hermes/intent/trancept:BebopFly: b'{"sessionId":"96f371a0-64f0-47d5-8ea7-3075e0bc375f","customData":null,"siteId":"default","input":"up","intent":{"intentName":"trancept:BebopFly","probability":1.0},"slots":[{"rawValue":"up","value":{"kind":"Custom","value":"up"},"range":{"start":0,"end":2},"entity":"FlyAction","slotName":"Action"}]}'
+   '''
+   mqtt_client.subscribe('hermes/intent/trancept:BebopFly')
 
 # Process a message as it arrives
 def on_message(client, userdata, msg):
     # Read Snips Payload
-    slots = parse_slots(json.loads(msg.payload))
-    session_id = parse_session_id(msg)
+    print(msg.payload)
+    json_data = msg.payload.decode('utf-8')
+    slots = parse_slots(json.loads(json_data))
+    session_id = parse_session_id(json_data)
     if 'Action' not in slots:
         say(session_id, "I don't know where I should go.")
     else:
@@ -32,7 +42,7 @@ def parse_session_id(msg):
     '''
     Extract the session id from the message
     '''
-    data = json.loads(msg.payload)
+    data = json.loads(msg)
     return data['sessionId']
 
 def say(session_id, text):
@@ -61,13 +71,13 @@ def make_move(action, distance=None):
     '''
     if action == 'takeoff':
         print("Taking off")
-        if with_drone: safe_takeoff(timeout)
+        if with_drone: bebop.safe_takeoff(timeout)
     elif action == 'land':
         print("Landing")
-        if with_drone: safe_land(timeout)
+        if with_drone: bebop.safe_land(timeout)
     elif action == 'left':
         print("Going ", action, " for ", distance, " meters.")
-        if with_drone: fly_direct(roll=1, pitch=0, yaw=0, vertical_movement=0, duration=1)
+        if with_drone: bebop.fly_direct(roll=1, pitch=0, yaw=0, vertical_movement=0, duration=1)
     elif action == 'right':
         print("Going ", action, " for ", distance, " meters.")
     elif action == 'up':
@@ -84,13 +94,15 @@ def make_move(action, distance=None):
         print("Going ", action, " for ", distance, " meters.")
     elif action == 'stop':
         print("Stop move")
-        if with_drone: fly_direct(0, 0, 0, 0, 0)
+        if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=0, duration=5)
     elif action == 'come back':
         print("RETURN TO LAUNCH")
     elif action == 'dance':
         print("Going ", action, " for you baby.")
     else:
+        if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=0, duration=5)
         print('ERROR : action ', action, ' unknown !')
+
 
 def parse_slots(msg):
     '''
@@ -117,8 +129,17 @@ def unit_test():
         #print(slots['Action'])
         make_move(slots['Action'], slots['distance'])
 
+unit_test
 if __name__ == '__main__' and with_mqtt:
+    if with_drone:
+      print("Connecting to Bebop")
+      success = bebop.connect(10)
+      print(success)
+    else:
+      print("Debug mode : no Bebop connection !")
+    print("Connecting to MQTT Snips queue...")
     mqtt_client.on_connect = on_connect
     mqtt_client.on_message = on_message
     mqtt_client.connect('localhost', 1883)
+    print("Waiting for mqtt message")
     mqtt_client.loop_forever()
