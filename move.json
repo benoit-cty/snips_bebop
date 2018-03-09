@@ -1,0 +1,35 @@
+{
+  "input": "go backward 15 meters",
+  "intent": {
+    "intentName": "trancept:ActionFly",
+    "probability": 1
+  },
+  "slots": [
+    {
+      "rawValue": "backward",
+      "value": {
+        "kind": "Custom",
+        "value": "backward"
+      },
+      "range": {
+        "start": 3,
+        "end": 11
+      },
+      "entity": "FlyAction",
+      "slotName": "Action"
+    },
+    {
+      "rawValue": "15",
+      "value": {
+        "kind": "Number",
+        "value": "15"
+      },
+      "range": {
+        "start": 12,
+        "end": 14
+      },
+      "entity": "snips/number",
+      "slotName": "distance"
+    }
+  ]
+}

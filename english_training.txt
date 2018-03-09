@@ -1,0 +1,17 @@
+Can you [takeoff](Action) and go [5](distance) meters [forward](Action) please ?
+[fuck](Action), stop !
+Oh my god, [stop](Action) now !
+Please [takeoff](Action)
+[stop](Action)
+go [3](distance) meter [right](Action)
+[come back](Action) now
+Come on baby [dance](Action) for me !
+[dance](Action) for me baby
+[land](Action)
+[takeoff](Action)
+go [left](Action) [1](distance) meter
+go [backward](Action) [15](distance) meters
+go [down](Action) [2](distance) meters
+go [up](Action) [3](distance) meters
+go [forward](Action) [10](distance) meters
+[climb](Action) [5](distance) meters

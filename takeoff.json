@@ -1,0 +1,22 @@
+{
+  "input": "takeoff",
+  "intent": {
+    "intentName": "trancept:ActionFly",
+    "probability": 1
+  },
+  "slots": [
+    {
+      "rawValue": "takeoff",
+      "value": {
+        "kind": "Custom",
+        "value": "takeoff"
+      },
+      "range": {
+        "start": 0,
+        "end": 7
+      },
+      "entity": "snips/default--Action",
+      "slotName": "Action"
+    }
+  ]
+}
