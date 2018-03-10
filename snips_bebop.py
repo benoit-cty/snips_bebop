@@ -8,7 +8,7 @@ from Bebop import Bebop
 bebop = Bebop()
 
 # Boolean to debug things, set to True in production
-with_drone = False
+with_drone = True
 with_mqtt = True
 
 # MQTT client to connect to the bus
@@ -77,30 +77,38 @@ def make_move(action, distance=None):
         if with_drone: bebop.safe_land(timeout)
     elif action == 'left':
         print("Going ", action, " for ", distance, " meters.")
-        if with_drone: bebop.fly_direct(roll=1, pitch=0, yaw=0, vertical_movement=0, duration=1)
+        if with_drone: bebop.fly_direct(roll=-10, pitch=0, yaw=0, vertical_movement=0, duration=1)
     elif action == 'right':
         print("Going ", action, " for ", distance, " meters.")
+        if with_drone: bebop.fly_direct(roll=10, pitch=0, yaw=0, vertical_movement=0, duration=1)
     elif action == 'up':
         print("Going ", action, " for ", distance, " meters.")
+        if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=10, duration=1)
     elif action == 'down':
         print("Going ", action, " for ", distance, " meters.")
-    elif action == 'backward':
+        if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=-10, duration=1)
+    elif action == 'backward':        
         print("Going ", action, " for ", distance, " meters.")
+        if with_drone: bebop.fly_direct(roll=0, pitch=-10, yaw=0, vertical_movement=0, duration=1)
     elif action == 'forward':
         print("forward")
+        if with_drone: bebop.fly_direct(roll=0, pitch=10, yaw=0, vertical_movement=0, duration=1)
     elif action == 'left turn':
         print("Going ", action, " for ", distance, " meters.")
+        if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=-10, vertical_movement=0, duration=1)
     elif action == 'right turn':
         print("Going ", action, " for ", distance, " meters.")
+        if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=10, vertical_movement=0, duration=1)
     elif action == 'stop':
         print("Stop move")
-        if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=0, duration=5)
+        if with_drone: bebop.safe_land(timeout)
+        #if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=0, duration=5)
     elif action == 'come back':
         print("RETURN TO LAUNCH")
     elif action == 'dance':
         print("Going ", action, " for you baby.")
     else:
-        if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=0, duration=5)
+        if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=0, duration=1)
         print('ERROR : action ', action, ' unknown !')
 
 
