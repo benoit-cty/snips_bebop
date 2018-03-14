@@ -1,11 +1,11 @@
-import json
+uimport json
 # https://github.com/snipsco/snips-platform-documentation/tree/master/python
 import paho.mqtt.client as mqtt
 # Import sub-module 'pyparrot'
 import sys
-sys.path.insert(0, sys.path[0]+'/pyparrot')
-from Bebop import Bebop
-bebop = Bebop()
+#sys.path.insert(0, sys.path[0]+'/pyparrot')
+#from Bebop import Bebop
+#bebop = Bebop()
 
 # Boolean to debug things, set to True in production
 with_drone = True
@@ -15,11 +15,10 @@ with_mqtt = True
 if with_mqtt: mqtt_client = mqtt.Client()
 
 
-
 # Subscribe to the important messages
 def on_connect(client, userdata, flags, rc):
    '''
-   hermes/intent/trancept:BebopFly: b'{"sessionId":"96f371a0-64f0-47d5-8ea7-3075e0bc375f","customData":null,"siteId":"default","input":"up","intent":{"intentName":"trancept:BebopFly","probability":1.0},"slots":[{"rawValue":"up","value":{"kind":"Custom","value":"up"},"range":{"start":0,"end":2},"entity":"FlyAction","slotName":"Action"}]}'
+   Listning to the MQTT bus
    '''
    mqtt_client.subscribe('hermes/intent/trancept:BebopFly')
 
@@ -45,14 +44,22 @@ def parse_session_id(msg):
     data = json.loads(msg)
     return data['sessionId']
 
+
 def say(session_id, text):
     '''
-    Print the output to the console and to the TTS engine
+    Print the output to the console and to the TTS engine and keep dialog session open
+    '''
+    print(text)
+    mqtt_client.publish('hermes/dialogueManager/continueSession', json.dumps({'text': text, "sessionId" : session_id}))
+
+def say_and_end_session(session_id, text):
+    '''
+    Print the output to the console and to the TTS engine and end the dialogue session
     '''
     print(text)
     mqtt_client.publish('hermes/dialogueManager/endSession', json.dumps({'text': text, "sessionId" : session_id}))
 
-def make_move(action, distance=None):
+def make_move(action, distance=1):
     timeout = 5
     '''
     land,
@@ -65,48 +72,51 @@ def make_move(action, distance=None):
     left turn, yaw left
     forward, front
     backward, back
-    stop, no, oh my god, fuck, abort
+    stop
     come back, return to launch
     dance, show me
     '''
     if action == 'takeoff':
-        print("Taking off")
-        if with_drone: bebop.safe_takeoff(timeout)
+        say("Taking off")
+        uav.takeoff()
+        uav.land()
     elif action == 'land':
-        print("Landing")
-        if with_drone: bebop.safe_land(timeout)
+        say("Landing")
+        uav.land()
     elif action == 'left':
-        print("Going ", action, " for ", distance, " meters.")
-        if with_drone: bebop.fly_direct(roll=-10, pitch=0, yaw=0, vertical_movement=0, duration=1)
+        say('Going {} for {} meters.'.format(action, distance)
+        uav.roll(-10, distance)
     elif action == 'right':
         print("Going ", action, " for ", distance, " meters.")
-        if with_drone: bebop.fly_direct(roll=10, pitch=0, yaw=0, vertical_movement=0, duration=1)
+        uav.roll(10, distance)
     elif action == 'up':
         print("Going ", action, " for ", distance, " meters.")
-        if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=10, duration=1)
+        uav.throttle(10, distance)
     elif action == 'down':
         print("Going ", action, " for ", distance, " meters.")
-        if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=-10, duration=1)
-    elif action == 'backward':        
+        uav.throttle(-10, distance)
+    elif action == 'backward':
         print("Going ", action, " for ", distance, " meters.")
-        if with_drone: bebop.fly_direct(roll=0, pitch=-10, yaw=0, vertical_movement=0, duration=1)
+        uav.pitch(-10, distance)
     elif action == 'forward':
         print("forward")
-        if with_drone: bebop.fly_direct(roll=0, pitch=10, yaw=0, vertical_movement=0, duration=1)
+        uav.pitch(10, distance)
     elif action == 'left turn':
         print("Going ", action, " for ", distance, " meters.")
-        if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=-10, vertical_movement=0, duration=1)
+        uav.yaw(-10, distance)
     elif action == 'right turn':
         print("Going ", action, " for ", distance, " meters.")
-        if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=10, vertical_movement=0, duration=1)
+        uav.yaw(10, distance)
     elif action == 'stop':
         print("Stop move")
-        if with_drone: bebop.safe_land(timeout)
+        uav.stop()
+        #if with_drone: bebop.safe_land(timeout)
         #if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=0, duration=5)
     elif action == 'come back':
-        print("RETURN TO LAUNCH")
+        say("RTL Not implemented.")
     elif action == 'dance':
         print("Going ", action, " for you baby.")
+        uav.test_move()
     else:
         if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=0, duration=1)
         print('ERROR : action ', action, ' unknown !')
