@@ -88,7 +88,7 @@ ifconfig wlan0
 
 To view messages run
 ```
-snips_watch -v & XXX &
+snips_watch -v &
 ```
 Then run programm :
 ```
@@ -98,7 +98,16 @@ python3 ./snips_bebop.py
 Say "Jarvis, takeoff"
 And you will see this message :
 ```
-Lorem ipsum
+[20:34:24] [Hotword] detected on site default
+[20:34:24] [Dialogue] session with id 'ed6a20ab-f4ca-4e9e-9682-9f41a127d1e2' was started on site default
+[20:34:28] [Asr] captured text "takeoff" in 3.9s
+[20:34:28] [Nlu] detected intent trancept:BebopFly with probability 1.000 for input "takeoff"
+              Slots ->
+                 Action -> takeoff
+b'{"sessionId":"ed6a20ab-f4ca-4e9e-9682-9f41a127d1e2","customData":null,"siteId":"default","input":"takeoff","intent":{"intentName":"trancept:BebopFly","probability":1.0},"slots":[{"rawValue":"takeoff","value":{"kind":"Custom","value":"takeoff"},"range":{"start":0,"end":7},"entity":"FlyAction","slotName":"Action"}]}'
+OK, I will takeoff my lord.
+Taking off
+Going to takeoff
 ```
 
 But the UAV will net takeoff because you are in safe mode by default.
@@ -106,7 +115,17 @@ Say "land"
 
 And you will see this message :
 ```
-blal
+[20:34:37] [Asr] captured text "land" in 6.6s
+[20:34:37] [Nlu] detected intent trancept:BebopFly with probability 1.000 for input "land"
+              Slots ->
+                 Action -> land
+[20:34:37] [Dialogue] New intent detected trancept:BebopFly with probability 1.000
+              Slots ->
+                 Action -> land
+b'{"sessionId":"ed6a20ab-f4ca-4e9e-9682-9f41a127d1e2","customData":null,"siteId":"default","input":"land","intent":{"intentName":"trancept:BebopFly","probability":1.0},"slots":[{"rawValue":"land","value":{"kind":"Custom","value":"land"},"range":{"start":0,"end":4},"entity":"FlyAction","slotName":"Action"}]}'
+OK, I will land my lord.
+Landing
+Going to land
 ```
 
 ## Fly for real

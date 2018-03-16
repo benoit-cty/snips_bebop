@@ -1,17 +1,18 @@
-uimport json
+import json
 # https://github.com/snipsco/snips-platform-documentation/tree/master/python
 import paho.mqtt.client as mqtt
 import sys
-import uavBebop
+from uavBebop import uavBebop
 
 # Boolean to debug things, set to True in production
 with_drone = False
-with_mqtt = False
+with_mqtt = True
 
 
 # MQTT client to connect to the bus
 if with_mqtt: mqtt_client = mqtt.Client()
 
+uav = uavBebop()
 
 def on_connect(client, userdata, flags, rc):
    '''
@@ -30,11 +31,11 @@ def on_message(client, userdata, msg):
     slots = parse_slots(json.loads(json_data))
     session_id = parse_session_id(json_data)
     if 'Action' not in slots:
-        say(session_id, "I don't know where I should go.")
+        say("I don't know where I should go.", session_id)
     else:
         action = slots['Action']
-        say(session_id, 'OK, I will {} my lord.'.format(action))
-        make_move(action)
+        say('OK, I will {} my lord.'.format(action), session_id)
+        make_move(action, session_id = session_id)
 
 
 def parse_session_id(msg):
@@ -45,21 +46,22 @@ def parse_session_id(msg):
     return data['sessionId']
 
 
-def say(session_id, text):
+def say(text, session_id = 0):
     '''
     Print the output to the console and to the TTS engine and keep dialog session open
     '''
     print(text)
-    mqtt_client.publish('hermes/dialogueManager/continueSession', json.dumps({'text': text, "sessionId" : session_id}))
+    if with_mqtt: mqtt_client.publish('hermes/dialogueManager/continueSession', json.dumps({'text': text, "sessionId" : session_id}))
 
 def say_and_end_session(session_id, text):
     '''
     Print the output to the console and to the TTS engine and end the dialogue session
     '''
     print(text)
-    mqtt_client.publish('hermes/dialogueManager/endSession', json.dumps({'text': text, "sessionId" : session_id}))
+    if with_mqtt: mqtt_client.publish('hermes/dialogueManager/endSession', json.dumps({'text': text, "sessionId" : session_id}))
 
-def make_move(action, distance=1):
+def make_move(action, distance=1, session_id = 0):
+    global uav
     timeout = 5
     '''
     land,
@@ -86,7 +88,7 @@ def make_move(action, distance=1):
         uav.disconnect()
         sys.exit(0)
     elif action == 'left':
-        say('Going {} for {} meters.'.format(action, distance)
+        say('Going {} for {} meters.'.format(action, distance))
         uav.roll(-10, distance)
     elif action == 'right':
         print("Going ", action, " for ", distance, " meters.")
@@ -112,8 +114,6 @@ def make_move(action, distance=1):
     elif action == 'stop':
         print("Stop move")
         uav.stop()
-        #if with_drone: bebop.safe_land(timeout)
-        #if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=0, duration=5)
     elif action == 'come back':
         say("RTL Not implemented.")
     elif action == 'dance':
@@ -133,7 +133,7 @@ def parse_slots(msg):
     return dict((slot['slotName'], slot['rawValue']) for slot in data['slots'])
 
 def unit_test():
-    with open('takeoff.json') as json_data:
+    with open('./snips_config/takeoff.json') as json_data:
         msg = json.load(json_data)
         #print(msg)
         slots = parse_slots(msg)
@@ -141,7 +141,7 @@ def unit_test():
         #print(slots['Action'])
         make_move(slots['Action'])
 
-    with open('move.json') as json_data:
+    with open('./snips_config/move.json') as json_data:
         msg = json.load(json_data)
         #print(msg)
         slots = parse_slots(msg)
@@ -149,8 +149,8 @@ def unit_test():
         #print(slots['Action'])
         make_move(slots['Action'], slots['distance'])
 
-unit_test()
-if __name__ == '__main__' and with_mqtt:
+if __name__ == '__main__':
+  if with_mqtt:
     if with_drone:
       uav.allow_flight()
       print("Connecting to Bebop")
@@ -163,4 +163,8 @@ if __name__ == '__main__' and with_mqtt:
     mqtt_client.on_message = on_message
     mqtt_client.connect('localhost', 1883)
     print("Waiting for mqtt message")
+    mqtt_client.publish('hermes/tts/say', json.dumps({'text': 'Ready to fly !'}))
     mqtt_client.loop_forever()
+  else:
+    print("INFO Unit test : no drone and no MQTT")
+    unit_test()
