@@ -1,29 +1,29 @@
 uimport json
 # https://github.com/snipsco/snips-platform-documentation/tree/master/python
 import paho.mqtt.client as mqtt
-# Import sub-module 'pyparrot'
 import sys
-#sys.path.insert(0, sys.path[0]+'/pyparrot')
-#from Bebop import Bebop
-#bebop = Bebop()
+import uavBebop
 
 # Boolean to debug things, set to True in production
-with_drone = True
-with_mqtt = True
+with_drone = False
+with_mqtt = False
+
 
 # MQTT client to connect to the bus
 if with_mqtt: mqtt_client = mqtt.Client()
 
 
-# Subscribe to the important messages
 def on_connect(client, userdata, flags, rc):
    '''
    Listning to the MQTT bus
    '''
    mqtt_client.subscribe('hermes/intent/trancept:BebopFly')
 
-# Process a message as it arrives
+
 def on_message(client, userdata, msg):
+    '''
+    # Process a message as it arrives
+    '''
     # Read Snips Payload
     print(msg.payload)
     json_data = msg.payload.decode('utf-8')
@@ -83,6 +83,8 @@ def make_move(action, distance=1):
     elif action == 'land':
         say("Landing")
         uav.land()
+        uav.disconnect()
+        sys.exit(0)
     elif action == 'left':
         say('Going {} for {} meters.'.format(action, distance)
         uav.roll(-10, distance)
@@ -147,14 +149,15 @@ def unit_test():
         #print(slots['Action'])
         make_move(slots['Action'], slots['distance'])
 
-unit_test
+unit_test()
 if __name__ == '__main__' and with_mqtt:
     if with_drone:
+      uav.allow_flight()
       print("Connecting to Bebop")
-      success = bebop.connect(10)
+      success = uav.connect()
       print(success)
     else:
-      print("Debug mode : no Bebop connection !")
+      print("INFO : Debug mode : no Bebop connection !")
     print("Connecting to MQTT Snips queue...")
     mqtt_client.on_connect = on_connect
     mqtt_client.on_message = on_message
