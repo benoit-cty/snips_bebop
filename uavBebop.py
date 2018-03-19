@@ -38,16 +38,16 @@ class uavBebop:
 
     def roll(self, speed, distance):
         self.debug("Going to roll {} for {}".format(speed, distance))
-        if self.with_drone: self.bebop.fly_direct(roll=speed*speed_factor, pitch=0, yaw=0, vertical_movement=0, duration=distance)
+        if self.with_drone: self.bebop.fly_direct(roll=speed*self.speed_factor, pitch=0, yaw=0, vertical_movement=0, duration=distance)
 
     def pitch(self, speed, distance):
-        if self.with_drone: self.bebop.fly_direct(roll=0, pitch=speed*speed_factor, yaw=0, vertical_movement=0, duration=distance)
+        if self.with_drone: self.bebop.fly_direct(roll=0, pitch=speed*self.speed_factor, yaw=0, vertical_movement=0, duration=distance)
 
     def yaw(self, speed, distance):
-        if self.with_drone: self.bebop.fly_direct(roll=0, pitch=0, yaw=speed*speed_factor, vertical_movement=0, duration=distance)
+        if self.with_drone: self.bebop.fly_direct(roll=0, pitch=0, yaw=speed*self.speed_factor, vertical_movement=0, duration=distance)
 
     def throttle(self, speed, distance):
-        if self.with_drone: self.bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=speed*speed_factor, duration=distance)
+        if self.with_drone: self.bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=speed*self.speed_factor, duration=distance)
 
     def stop(self):
         if self.with_drone: self.bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=0, duration=distance)
@@ -77,6 +77,7 @@ class uavBebop:
 
 if __name__ == '__main__':
     uav = uavBebop()
+    #uav.allow_flight()
     uav.connect()
     uav.arm()
     uav.takeoff()

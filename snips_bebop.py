@@ -5,7 +5,7 @@ import sys
 from uavBebop import uavBebop
 
 # Boolean to debug things, set to True in production
-with_drone = False
+with_drone = True
 with_mqtt = True
 
 
@@ -36,6 +36,7 @@ def on_message(client, userdata, msg):
         action = slots['Action']
         say('OK, I will {} my lord.'.format(action), session_id)
         make_move(action, session_id = session_id)
+        say("MakeMove Done")
 
 
 def parse_session_id(msg):
@@ -81,14 +82,14 @@ def make_move(action, distance=1, session_id = 0):
     if action == 'takeoff':
         say("Taking off")
         uav.takeoff()
-        uav.land()
+        #uav.land()
     elif action == 'land':
         say("Landing")
         uav.land()
         uav.disconnect()
         sys.exit(0)
     elif action == 'left':
-        say('Going {} for {} meters.'.format(action, distance))
+        #say('Going {} for {} meters.'.format(action, distance))
         uav.roll(-10, distance)
     elif action == 'right':
         print("Going ", action, " for ", distance, " meters.")
@@ -122,7 +123,6 @@ def make_move(action, distance=1, session_id = 0):
     else:
         if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=0, duration=1)
         print('ERROR : action ', action, ' unknown !')
-
 
 def parse_slots(msg):
     '''
