@@ -1,3 +1,6 @@
 [submodule "pyparrot"]
 	path = pyparrot
 	url = https://github.com/amymcgovern/pyparrot.git
+[submodule "4mics_hat"]
+	path = 4mics_hat
+	url = https://github.com/respeaker/4mics_hat.git

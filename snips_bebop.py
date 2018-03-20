@@ -5,10 +5,19 @@ import sys
 from uavBebop import uavBebop
 
 # Boolean to debug things, set to True in production
-with_drone = True
+#with_drone = True
+with_drone = False
 with_mqtt = True
-
-
+# If you have a reSpeaker you could have a visual confirmation with the leds.
+with_respeaker = True
+if with_respeaker:
+	import sys
+	sys.path.insert(0, sys.path[0]+'/../4mics_hat')
+	#print(sys.path)
+	from pixels import Pixels, pixels
+	from google_home_led_pattern import GoogleHomeLedPattern
+	pixels.pattern = GoogleHomeLedPattern(show=pixels.show)
+	pixels.wakeup()
 # MQTT client to connect to the bus
 if with_mqtt: mqtt_client = mqtt.Client()
 
@@ -23,10 +32,10 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     '''
-    # Process a message as it arrives
+    Process a message as it arrives
     '''
     # Read Snips Payload
-    print(msg.payload)
+    #print(msg.payload)
     json_data = msg.payload.decode('utf-8')
     slots = parse_slots(json.loads(json_data))
     session_id = parse_session_id(json_data)
@@ -34,9 +43,11 @@ def on_message(client, userdata, msg):
         say("I don't know where I should go.", session_id)
     else:
         action = slots['Action']
-        say('OK, I will {} my lord.'.format(action), session_id)
+        if with_respeaker: pixels.speak()
+        say('OK {}'.format(action), session_id)
         make_move(action, session_id = session_id)
-        say("MakeMove Done")
+        if with_respeaker: pixels.think()        
+        say("Done")
 
 
 def parse_session_id(msg):
@@ -92,33 +103,33 @@ def make_move(action, distance=1, session_id = 0):
         #say('Going {} for {} meters.'.format(action, distance))
         uav.roll(-10, distance)
     elif action == 'right':
-        print("Going ", action, " for ", distance, " meters.")
+        #print("Going ", action, " for ", distance, " meters.")
         uav.roll(10, distance)
     elif action == 'up':
-        print("Going ", action, " for ", distance, " meters.")
+        #print("Going ", action, " for ", distance, " meters.")
         uav.throttle(10, distance)
     elif action == 'down':
-        print("Going ", action, " for ", distance, " meters.")
+        #print("Going ", action, " for ", distance, " meters.")
         uav.throttle(-10, distance)
     elif action == 'backward':
-        print("Going ", action, " for ", distance, " meters.")
+        #print("Going ", action, " for ", distance, " meters.")
         uav.pitch(-10, distance)
     elif action == 'forward':
-        print("forward")
+        #print("forward")
         uav.pitch(10, distance)
     elif action == 'left turn':
-        print("Going ", action, " for ", distance, " meters.")
+        #print("Going ", action, " for ", distance, " meters.")
         uav.yaw(-10, distance)
     elif action == 'right turn':
-        print("Going ", action, " for ", distance, " meters.")
+        #print("Going ", action, " for ", distance, " meters.")
         uav.yaw(10, distance)
     elif action == 'stop':
-        print("Stop move")
+        #print("Stop move")
         uav.stop()
     elif action == 'come back':
         say("RTL Not implemented.")
     elif action == 'dance':
-        print("Going ", action, " for you baby.")
+        #print("Going ", action, " for you baby.")
         uav.test_move()
     else:
         if with_drone: bebop.fly_direct(roll=0, pitch=0, yaw=0, vertical_movement=0, duration=1)
@@ -168,3 +179,5 @@ if __name__ == '__main__':
   else:
     print("INFO Unit test : no drone and no MQTT")
     unit_test()
+
+if with_respeaker: pixels.off()
