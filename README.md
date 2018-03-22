@@ -4,7 +4,9 @@ I've made a proof of concept of a voice controlled UAV using Bebop 2. With small
 Quite useless but maybe it could help disable people to fly UAV and experiment FPV. 
 A largest use case for vocal assistant in UAV could be to talk to the flight controller to query information about battery or altitude.
 
-Demo Video :https://www.youtube.com/watch?v=GNpz7S0B6Gs
+Demo Video :
+[![Youtube video](https://i.ytimg.com/vi_webp/GNpz7S0B6Gs/sddefault.webp)](https://www.youtube.com/watch?v=GNpz7S0B6Gs)
+https://www.youtube.com/watch?v=GNpz7S0B6Gs
 
 I've made it just for fun to play with vocal assistant. I use Snips.ai fot that because :
 - No need for an internet connection
