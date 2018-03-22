@@ -5,7 +5,8 @@ Quite useless but maybe it could help disable people to fly UAV and experiment 
 A largest use case for vocal assistant in UAV could be to talk to the flight controller to query information about battery or altitude.
 
 Demo Video :
-XXX_TODO
+[![Youtube video](https://i.ytimg.com/vi_webp/GNpz7S0B6Gs/sddefault.webp)](https://www.youtube.com/watch?v=GNpz7S0B6Gs)
+https://www.youtube.com/watch?v=GNpz7S0B6Gs
 
 I've made it just for fun to play with vocal assistant. I use Snips.ai fot that because :
 - No need for an internet connection
