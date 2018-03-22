@@ -5,6 +5,7 @@ Quite useless but maybe it could help disable people to fly UAV and experiment 
 A largest use case for vocal assistant in UAV could be to talk to the flight controller to query information about battery or altitude.
 
 Demo Video :
+
 [![Youtube video](https://i.ytimg.com/vi_webp/GNpz7S0B6Gs/sddefault.webp)](https://www.youtube.com/watch?v=GNpz7S0B6Gs)
 https://www.youtube.com/watch?v=GNpz7S0B6Gs
 
@@ -34,6 +35,9 @@ Hardware part that you need :
 - A Bebop 2, or a Mambo
 - A power source (LiPo with 5V BEC)
 - An HDMI FPV Screen and a keyboard if you want to debug in the field
+
+
+[[https://github.com/trancept/snips_bebop/blob/master/hardwarePart-800.jpg?raw=true|alt=Hardware part]]
 
 Software part :
 - Install Raspian, Python 3 and pip3
