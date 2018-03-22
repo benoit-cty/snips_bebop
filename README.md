@@ -7,7 +7,7 @@ A largest use case for vocal assistant in UAV could be to talk to the flight co
 Demo Video :
 
 [![Youtube video](https://i.ytimg.com/vi_webp/GNpz7S0B6Gs/sddefault.webp)](https://www.youtube.com/watch?v=GNpz7S0B6Gs)
-https://www.youtube.com/watch?v=GNpz7S0B6Gs
+
 
 I've made it just for fun to play with vocal assistant. I use Snips.ai fot that because :
 - No need for an internet connection
@@ -37,7 +37,7 @@ Hardware part that you need :
 - An HDMI FPV Screen and a keyboard if you want to debug in the field
 
 
-[[https://github.com/trancept/snips_bebop/blob/master/hardwarePart-800.jpg?raw=true|alt=Hardware part]]
+[![Hardware part](https://github.com/trancept/snips_bebop/blob/master/hardwarePart-800.jpg?raw=true)]
 
 Software part :
 - Install Raspian, Python 3 and pip3
