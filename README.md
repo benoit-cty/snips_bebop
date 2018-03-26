@@ -51,9 +51,9 @@ sudo -H pip3 install paho-mqtt  zeroconf untangle
 arecord  --duration=10 -f cd -vv ~/rectest.wav
 aplay ~/rectest.wav
 ```
-- Snips FlyUAV bundle, you can download it from my repo (XXX), but I warn you : never download things from un-trusted source like me ! You better re-create it from console.snips.ai or wait for Snips to add it in their Marketplace. How to do the Snips assistant yourself
-  - Create an account in console.snips.ai
-  - Create a new assistant and import the config file from https://github.com/trancept/snips_bebop/tree/master/snips_config 
+- Snips FlyUAV bundle, you can create it from https://console.snips.ai as the bundle is in the Marketplace :
+  - Create an account in https://console.snips.ai
+  - Create a new assistant and add the "Bebop Fly (English)" (or create it yourself from the config file in https://github.com/trancept/snips_bebop/tree/master/snips_config )
   - Download it to the Raspberry and deploy it according to https://github.com/snipsco/snips-platform-documentation/wiki/1.-Setup-the-Snips-Voice-Platform 
   - My project include the dependency of pyParrot as a sub-module :
 ```
